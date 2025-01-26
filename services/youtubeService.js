@@ -4,9 +4,9 @@ const parseMarkersList = (dom) => {
     const scriptTags = dom('script').toArray();
     let markersData = {};
 
-    for (const script of scriptTags) {
+    for (let i = scriptTags.length - 1; i >= 0; i--) {
+        const script = scriptTags[i];
         const scriptContent = dom(script).html();
-        // console.log(scriptContent);
 
         if (scriptContent.includes('"markersList"')) {
             try {
@@ -43,16 +43,24 @@ const parseMarkersList = (dom) => {
 }
 
 const parseTitle = (dom) => {
-    return dom('title').html();
+    return dom('title').html().replace(' - YouTube', '');
 }
-
 
 exports.getVidData = async (vid) => {
     const res = await fetch("https://www.youtube.com/watch?v=" + vid);
-    const html = await res.text();
-    const dom = cheerio.load(html);
-    return  {
-        markersList : parseMarkersList(dom),
-        vidTitle : dom('title').html()
+
+    if (res.url.includes("youtube.com/watch?v=")) {
+
+        const html = await res.text();
+        const dom = cheerio.load(html);
+        return  {
+            markersList : parseMarkersList(dom),
+            vidTitle : parseTitle(dom)
+        };
+    }
+    else return  {
+        markersList : null,
+        vidTitle : null
     };
+
 }
