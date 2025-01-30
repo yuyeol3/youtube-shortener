@@ -10,5 +10,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/heatmap/:vid', apis.getHeatmap);
+router.get('/recent-shorten-vids', apis.getRecentShortenVids);
 
 module.exports = router;
