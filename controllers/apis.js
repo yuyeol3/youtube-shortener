@@ -1,11 +1,15 @@
 const { getVidData } = require("../services/youtubeService");
-const RecentShortenVid = require("../models/RecentShortenVid");
+const RecentShortenVid = require(process.cwd() + '/models/recentShortenVid')
 
 exports.getHeatmap = async (req, res, next) => {
     try {
         const videoId = req.params.vid;
         const vidData = await getVidData(videoId);
-        await RecentShortenVid.insert(new RecentShortenVid(videoId, vidData.vidTitle));
+
+        if (videoId && vidData.vidTitle)
+            await RecentShortenVid.insert(
+                new RecentShortenVid(videoId, vidData.vidTitle)
+            );
         vidData.message = ""
         vidData.status = "OK";
         res.json(vidData);

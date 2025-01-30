@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
 
-const parseMarkersList = (dom) => {
+const parseMarkersList = async (dom) => {
     const scriptTags = dom('script').toArray();
     let markersData = {};
 
@@ -42,20 +42,30 @@ const parseMarkersList = (dom) => {
     return markersData;
 }
 
-const parseTitle = (dom) => {
-    return dom('title').html().replace(' - YouTube', '');
-}
+const parseTitle = async (vid) => {
+    const vid_url = "https://www.youtube.com/watch?v=" + vid
+    const url = `https://noembed.com/embed?dataType=json&url=${vid_url}`
+
+    const res = await fetch(url);
+    const dat = await res.json();
+    return dat.title;
+}   
 
 exports.getVidData = async (vid) => {
-    const res = await fetch("https://www.youtube.com/watch?v=" + vid);
+    const res = await fetch("https://www.youtube.com/watch?v=" + vid,
+        {
+            headers: {"Content-Type": "text/html; charset=UTF-8"}
+        }
+    );
 
     if (res.url.includes("youtube.com/watch?v=")) {
 
         const html = await res.text();
         const dom = cheerio.load(html);
+        console.log(await parseTitle(dom));
         return  {
-            markersList : parseMarkersList(dom),
-            vidTitle : parseTitle(dom)
+            markersList : await parseMarkersList(dom),
+            vidTitle : await parseTitle(vid)
         };
     }
     else return  {

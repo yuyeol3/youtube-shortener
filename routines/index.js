@@ -1,6 +1,6 @@
 const cron = require('node-cron');
-const RecentShortenVid = require("../models/RecentShortenVid");
-// 매일 자정(00:00)에 오래된 URL 정리
+const RecentShortenVid = require(process.cwd() + '/models/recentShortenVid')
+
 cron.schedule('0 0 * * *', async () => {
     console.log("🔄 Running daily cleanup task...");
     await RecentShortenVid.removeOlds();
