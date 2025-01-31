@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+    <!-- 빨간색 둥근 사각형 배경 (YouTube 느낌) -->
+    <rect x="0" y="0" width="256" height="256" rx="40" fill="#FF0000"></rect>
+
+    <!-- 흰색 플레이(▶) 삼각형 -->
+    <polygon points="80,64 80,192 160,128" fill="#FFFFFF"></polygon>
+
+    <!-- 오른쪽 가위 아이콘(흰색 원 2개 + 교차하는 선 2개) -->
+    <circle cx="180" cy="100" r="10" fill="#FFFFFF"></circle>
+    <circle cx="220" cy="100" r="10" fill="#FFFFFF"></circle>
+    <path d="M 180 100 L 220 60" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"></path>
+    <path d="M 180 100 L 220 140" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"></path>
+</svg>
