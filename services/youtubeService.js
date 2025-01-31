@@ -1,4 +1,10 @@
 const cheerio = require('cheerio');
+const { exec } = require("child_process");
+
+const youtube_url = "https://www.youtube.com/watch?v=";
+const api_url = "https://noembed.com/embed?dataType=json&url=";
+
+
 
 const parseMarkersList = async (dom) => {
     const scriptTags = dom('script').toArray();
@@ -43,34 +49,44 @@ const parseMarkersList = async (dom) => {
 }
 
 const parseTitle = async (vid) => {
-    const vid_url = "https://www.youtube.com/watch?v=" + vid
-    const url = `https://noembed.com/embed?dataType=json&url=${vid_url}`
+    const vid_url = youtube_url + vid
+    const url = api_url + vid_url;
 
     const res = await fetch(url);
     const dat = await res.json();
     return dat.title;
 }   
 
+const checkValidVideo = async (vid) => {
+
+    const vid_url = youtube_url + vid
+    const url = api_url + vid_url;
+
+    const res = await fetch(url);
+    return res.ok;
+}
+
 exports.getVidData = async (vid) => {
-    const res = await fetch("https://www.youtube.com/watch?v=" + vid,
+    if (!await checkValidVideo(vid)) {
+        return  {
+            markersList : null,
+            vidTitle : null
+        };
+    }
+
+
+    const res = await fetch(youtube_url + vid,
         {
             headers: {"Content-Type": "text/html; charset=UTF-8"}
         }
     );
 
-    if (res.url.includes("youtube.com/watch?v=")) {
-
-        const html = await res.text();
-        const dom = cheerio.load(html);
-        console.log(await parseTitle(dom));
-        return  {
-            markersList : await parseMarkersList(dom),
-            vidTitle : await parseTitle(vid)
-        };
-    }
-    else return  {
-        markersList : null,
-        vidTitle : null
+    const html = await res.text();
+    const dom = cheerio.load(html);
+    return  {
+        markersList : await parseMarkersList(dom),
+        vidTitle : await parseTitle(vid)
     };
+
 
 }

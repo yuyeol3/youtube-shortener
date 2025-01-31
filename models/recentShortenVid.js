@@ -15,10 +15,15 @@ class RecentShortenVid {
         const [rows] = await db.execute(`
             SELECT * FROM recent_shorten_vids
              ORDER BY id DESC
-             LIMIT 10
+             LIMIT 20 
         `);
 
-        return rows;
+        const identityMap = new Map();
+        for (const row of rows) {
+            identityMap.set(row.shortCode, row);
+        }
+        // console.log(identityMap);
+        return Array.from(identityMap.values());
     }
 
     static async removeOlds(){
