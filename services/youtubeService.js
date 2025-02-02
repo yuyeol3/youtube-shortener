@@ -27,6 +27,7 @@ const parseMarkersList = async (dom) => {
     // 1. 모든 <script> 태그의 내용을 확인
     const scripts = dom('script');
 
+    // 주로 뒷 부분에 전역 객채가 있으므로 뒷부분부터 확인인
     for (let i = scripts.length - 1; i >=0; i--) {
         const script = scripts[i];
         const content = dom(script).html() || '';
@@ -47,19 +48,10 @@ const parseMarkersList = async (dom) => {
         if (!match) continue; // 해당 스크립트에서 못 찾으면 다음으로
 
         try {
-// 3. match[1] 이 '{ ... }'에 해당하므로 그대로 JSON.parse
+            // 3. match[1] 이 '{ ... }'에 해당하므로 그대로 JSON.parse
             const globalObj = JSON.parse(match[1]);
-
-            // 4. 이제 globalObj 안에 있는 markersList를 찾아본다
-            //    보통 'globalObj.markersList' 또는 더 깊은 곳에 있기도 하므로
-            //    실제 구조는 console.log(globalObj)를 찍어봐야 함
-            //    가령 playerOverlayRenderer 안쪽에 있을 때도 있음
-
-            // 5. 원하는 데이터를 반환하면 끝
-            // return {
-            //   markersList,
-            //   fullObject: globalObj  // 혹시 전체가 필요하면 같이 반환
-            // };
+            
+            // 4. 원하는 데이터를 반환하면 끝
             // console.log(globalObj);
             const markersList = globalObj
                 .frameworkUpdates
@@ -106,8 +98,7 @@ exports.getVidData = async (vid) => {
     }
 
 
-    const res = await fetch(youtube_url + vid,
-        {
+    const res = await fetch(youtube_url + vid, {
             headers: {"Content-Type": "text/html; charset=UTF-8"}
         }
     );
