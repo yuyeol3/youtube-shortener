@@ -6,7 +6,7 @@ exports.getHeatmap = async (req, res, next) => {
         const videoId = req.params.vid;
         const vidData = await getVidData(videoId);
 
-        if (videoId && vidData.vidTitle)
+        if (vidData.markersList.markersList && vidData.vidTitle)
             await RecentShortenVid.insert(
                 new RecentShortenVid(videoId, vidData.vidTitle)
             );
