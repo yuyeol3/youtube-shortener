@@ -3,32 +3,13 @@ const cheerio = require('cheerio');
 const youtube_url = "https://www.youtube.com/watch?v=";
 const api_url = "https://noembed.com/embed?dataType=json&url=";
 
-// const getParseMarkersList = async (vid) => {
-//     return new Promise((resolve, reject) => {
-//         exec("./fetch " + vid, (error, stdout, stderr)=>{
-//             if (error) reject(error);
-//             if (stderr) reject(stderr);
-//             resolve(stdout);
-//         })
-//     })
-// }
-//
-// const parseMarkersList = async (vid) => {
-//     try {
-//         const res = await getParseMarkersList(vid);
-//         return JSON.parse('{' + res + '}');
-//     } catch (err) {
-//         console.error(err);
-//         return {};
-//     }
-// }
-
-const parseMarkersList = async (dom) => {
+const parseYoutubeInitialData = async (dom) => {
     // 1. 모든 <script> 태그의 내용을 확인
     const scripts = dom('script');
-
-    // 주로 뒷 부분에 전역 객채가 있으므로 뒷부분부터 확인인
-    for (let i = scripts.length - 1; i >=0; i--) {
+    // 주로 뒷 부분에 전역 객채가 있으므로 뒷부분부터 확인
+    const start = scripts.length - 1;
+    const end = scripts.length - 10; // 10개만 확인
+    for (let i = start; i >= end; i--) {
         const script = scripts[i];
         const content = dom(script).html() || '';
 
@@ -50,18 +31,9 @@ const parseMarkersList = async (dom) => {
         try {
             // 3. match[1] 이 '{ ... }'에 해당하므로 그대로 JSON.parse
             const globalObj = JSON.parse(match[1]);
-            
-            // 4. 원하는 데이터를 반환하면 끝
-            // console.log(globalObj);
-            const markersList = globalObj
-                .frameworkUpdates
-                .entityBatchUpdate
-                .mutations[0]
-                .payload
-                .macroMarkersListEntity
-                .markersList;
-            return {markersList};
-        } catch (err) {
+            return globalObj;
+        } 
+        catch (err) {
             console.error(err);
             // 파싱 실패하면 다음 script로 넘어감
         }
@@ -71,13 +43,42 @@ const parseMarkersList = async (dom) => {
     return {};
 }
 
-const parseTitle = async (vid) => {
-    const vid_url = youtube_url + vid
-    const url = api_url + vid_url;
+const parseMarkersList = async (data) => {
+    try {
+        const markersList = data
+            .frameworkUpdates
+            .entityBatchUpdate
+            .mutations[0]
+            .payload
+            .macroMarkersListEntity
+            .markersList;
+        return {markersList};
+    } catch (err) {
+        console.error(err);
+        // 파싱 실패하면 다음 script로 넘어감
+    }
 
-    const res = await fetch(url);
-    const dat = await res.json();
-    return dat.title;
+    // 아무것도 못 찾았다면
+    return null;
+}
+
+const parseTitle = async (data) => {
+    try {
+        return data
+            .contents
+            .twoColumnWatchNextResults
+            .results
+            .results
+            .contents[0]
+            .videoPrimaryInfoRenderer
+            .title
+            .runs[0]
+            .text;
+    }
+    catch (err){
+        console.error(err);
+    }
+    return null;
 }
 
 const checkValidVideo = async (vid) => {
@@ -90,13 +91,6 @@ const checkValidVideo = async (vid) => {
 }
 
 exports.getVidData = async (vid) => {
-    if (!await checkValidVideo(vid)) {
-        return  {
-            markersList : null,
-            vidTitle : null
-        };
-    }
-
 
     const res = await fetch(youtube_url + vid, {
             headers: {"Content-Type": "text/html; charset=UTF-8"}
@@ -105,8 +99,8 @@ exports.getVidData = async (vid) => {
 
     const html = await res.text();
     const dom = cheerio.load(html);
-    return  {
-        markersList : await parseMarkersList(dom),
-        vidTitle : await parseTitle(vid)
-    };
+    const data = await parseYoutubeInitialData(dom);
+    const [markersList, vidTitle] = 
+        await Promise.all([parseMarkersList(data), parseTitle(data)])
+    return  {markersList, vidTitle};
 }
