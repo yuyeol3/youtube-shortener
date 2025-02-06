@@ -8,7 +8,7 @@ const parseYoutubeInitialData = async (dom) => {
     const scripts = dom('script');
     // 주로 뒷 부분에 전역 객채가 있으므로 뒷부분부터 확인
     const start = scripts.length - 1;
-    const end = scripts.length - 10; // 10개만 확인
+    const end = 0;
     for (let i = start; i >= end; i--) {
         const script = scripts[i];
         const content = dom(script).html() || '';
