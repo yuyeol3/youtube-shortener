@@ -104,3 +104,9 @@ exports.getVidData = async (vid) => {
         await Promise.all([parseMarkersList(data), parseTitle(data)])
     return  {markersList, vidTitle};
 }
+
+exports.getVidTitle = async(vid) => {
+    const res = await fetch(`${api_url}${youtube_url}${vid}`, {});
+    const data = await res.json();
+    return data.title;
+}
