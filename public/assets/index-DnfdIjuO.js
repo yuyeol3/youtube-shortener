@@ -116,8 +116,10 @@ var Bl=Object.defineProperty;var Js=e=>{throw TypeError(e)};var Fl=(e,t,n)=>t in
             </div>
         `),St.register(Hn,as,ls,$n,Ge,Fp,mm),this.heatMapChartCanvas=this.div.querySelector("#heatMapChart"),this.heatThresholdInput=this.div.querySelector("#heat-threshold-input"),this.vidPeriodLabel=this.div.querySelector("#shorten-vid-period"),this.vidHeatPointLabel=this.div.querySelector("#shorten-vid-heat-point"),this.shareButton=this.div.querySelector("#share-button"),this.heatMapChart=null}buildChart(t,n){this.heatMapChart&&this.heatMapChart.destroy(),this.heatMapChart=new St(this.heatMapChartCanvas.getContext("2d"),{type:"line",data:{labels:t,datasets:[{label:"heat point",data:n,borderColor:"rgba(85, 139, 207, 1)",borderWidth:2,fill:!0,backgroundColor:"rgba(85, 139, 207, 0.5)"}]},options:{responsive:!0,maintainAspectRatio:!1,aspectRatio:1,elements:{line:{tension:.4}},tooltips:{mode:"index",intersect:!0},plugins:{annotation:{annotations:{thresholdLine:{type:"line",yMin:0,yMax:0,borderColor:"red",borderWidth:2,label:{content:"Threshold",enabled:!0,position:"end"}}}}}}})}setChartThresholdLine(t){this.heatMapChart.options.plugins.annotation.annotations.thresholdLine.yMin=t,this.heatMapChart.options.plugins.annotation.annotations.thresholdLine.yMax=t,this.heatMapChart.update()}getThresholdValue(){return this.heatThresholdInput.value}setThresholdValue(t){this.heatThresholdInput.value=t}setVidPeriodLabelValue(t){this.vidPeriodLabel.innerText=t}setVidHeatPointLabelValue(t){this.vidHeatPointLabel.innerText=t}setEvent(t){this.heatThresholdInput.onkeyup=t}setShareButtonEvent(t){this.shareButton.onclick=t}}class wm{constructor(t,n,i){this.vid_id=t,this.title=n,this.createdAt=new Date(i)}getTitle(){return this.title}getVidId(){return this.vid_id}getImgLink(){return`https://i.ytimg.com/vi/${this.vid_id}/maxresdefault.jpg`}getCreatedAt(){return this.createdAt}}async function _m(){return(await tt.get("/apis/recent-shorten-vids")).data}class vm extends Et{constructor(t,n){super(t,`
             <div class="recent-shorten-vid-div">
-
-                    <img src="${n.getImgLink()}" alt="thumbnail" class="thumbnail" decoding="async">
+                    <div class="thumbnail-div">
+                        <img src="${n.getImgLink()}" alt="thumbnail" class="thumbnail">
+                    </div>
+                    
 
                 <p>${n.getTitle()}</p>
                 <!--<p>${n.getVidId()}</p>-->
