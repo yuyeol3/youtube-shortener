@@ -1,0 +1,15 @@
+{
+  "name": "Youtube Shortener",
+  "short_name": "YT Shortener",
+  "start_url": "/",
+  "display": "standalone",
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
