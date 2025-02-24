@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "start": "bun run ./bin/www",
-    "test": "bun run --watch ./bin/www "
+    "test": "cross-env DB_ENV=dev NODE_ENV=dev bun run --watch ./bin/www "
   },
   "dependencies": {
+    "bun": "^1.2.3",
     "cheerio": "^1.0.0",
     "cookie-parser": "~1.4.4",
+    "cross-env": "^7.0.3",
     "debug": "~2.6.9",
     "dotenv": "^16.4.7",
     "express": "5.0.0",
