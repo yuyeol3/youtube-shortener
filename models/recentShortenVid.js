@@ -7,7 +7,7 @@ class RecentShortenVid {
     }
 
     static async insert(recentShortenVid) {
-        db.execute(`INSERT INTO recent_shorten_vids (shortCode, title) 
+        await db.execute(`INSERT INTO recent_shorten_vids (shortCode, title) 
                     VALUES (? ,?)`, [recentShortenVid.shortCode, recentShortenVid.title]);
     }
 
