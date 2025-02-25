@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-
+const VidsHeatmap = require(process.cwd() + '/models/vidsHeatmap');
 const youtube_url = "https://www.youtube.com/watch?v=";
 const api_url = "https://noembed.com/embed?dataType=json&url=";
 
@@ -102,7 +102,7 @@ exports.getVidData = async (vid) => {
     const data = await parseYoutubeInitialData(dom);
     const [markersList, vidTitle] = 
         await Promise.all([parseMarkersList(data), parseTitle(data)])
-    return  {markersList, vidTitle};
+    return new VidsHeatmap(vid, {markersList, vidTitle});
 }
 
 exports.getVidTitle = async(vid) => {
