@@ -4,3 +4,4 @@
 DockerFile
 .dockerignore
 /ytParseCpp
+db.sqlite

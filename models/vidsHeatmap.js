@@ -10,19 +10,22 @@ class VidsHeatmap {
     }
 
     static async get(vidId) {
-        const [rows] = await db.execute(`SELECT * FROM vids_heatmap WHERE id=?`, [vidId]);
-        const isExist = rows.length > 0;
-        // console.log(rows);
+        const query = db.query(`SELECT * FROM vids_heatmap WHERE id= $id`)
+        const res = query.get({$id : vidId});
+
+        // console.log(res);
         return new VidsHeatmap(
             vidId,
-            isExist ? rows[0].heatmap : null,
+            res ? JSON.parse(res.heatmap) : null,
         );
     }
 
     static async set(vidsHeatmap) {
         const id = vidsHeatmap.vidId;
         const json = JSON.stringify(vidsHeatmap.heatmap);
-        await db.execute(`INSERT INTO vids_heatmap (id, heatmap) VALUES (?, ?)`, [id, json]);
+        const query = db.query(`INSERT INTO vids_heatmap (id, heatmap) VALUES ($id, $json)`);
+        query.run({$id : id, $json : json});
+        // await db.execute(`INSERT INTO vids_heatmap (id, heatmap) VALUES (?, ?)`, [id, json]);
     }
 }
 
