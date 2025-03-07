@@ -18,7 +18,8 @@ router.get('/', (req, res, next) => {
 router.get('/share/:id/:threshold',async (req, res, next) => {
   const {id, threshold} = req.params;
   const title = await getVidTitle(id);
-  res.render('share', { title, id, threshold });
+  res.render('share', { title, id: encodeURI(id), threshold: encodeURI(threshold) });
 });
+
 
 module.exports = router;
